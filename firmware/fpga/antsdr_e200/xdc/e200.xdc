@@ -144,3 +144,12 @@ set_clock_groups -name async_clk0_clk1 -asynchronous -group [get_clocks -include
 set_clock_groups -name async_clk0_clk1 -asynchronous -group [get_clocks -include_generated_clocks rgmii_rxc] -group [get_clocks -include_generated_clocks CLK_40MHz_FPGA]
 
 set_false_path -from [get_clocks CAT_DCLK_P] -to [get_clocks u_antsdr_e200_io/BUFR_inst/O]
+
+
+# ─── NCR Frame Start GPIO (J30 pin 2 = GPIO_00 = FPGA V5, Bank 13 / VCC_1V8) ───
+# Source: ANT-E200_Public.pdf schematic page 4 (Bank 13: V5 = IO_L11P_T1_SRCC_13)
+#         + page 10 (GPIO J30 header, pin 2 = GPIO_00 net).
+# UHD `set_command_time(T)` + `set_gpio_attr("FP0", "OUT", val, 0x01)` 호출 시
+# fp_gpio_out[0] 가 결정론적으로 본 핀에 반영. 외부 신호 1.8V LVCMOS.
+# 추가 GPIO_01~07 매핑은 schematic 정확 핀 확인 후 별도 추가.
+set_property -dict {PACKAGE_PIN V5 IOSTANDARD LVCMOS18} [get_ports gpio_hdr_0]

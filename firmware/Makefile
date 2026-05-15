@@ -76,9 +76,11 @@ build/uboot-env.txt: build/u-boot.elf | build
 	CROSS_COMPILE=$(CROSS_COMPILE) scripts/get_default_envs.sh > $@
 
 ## linux uImage
-linux/arch/arm/boot/uImage: 
+# HOSTCFLAGS=-fcommon: 시스템 GCC 10+ 가 default `-fno-common` 으로 old kernel
+# scripts/dtc bison auto-generated yylloc 중복 정의 link 실패 (Ubuntu 22.04 GCC 11).
+linux/arch/arm/boot/uImage:
 	make -C linux ARCH=arm zynq_$(TARGET)_defconfig
-	make -C linux -j $(NCORES) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) uImage UIMAGE_LOADADDR=0x8000
+	make -C linux -j $(NCORES) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) HOSTCFLAGS=-fcommon uImage UIMAGE_LOADADDR=0x8000
 
 
 .PHONY: linux/arch/arm/boot/uImage
@@ -87,8 +89,8 @@ build/uImage: linux/arch/arm/boot/uImage | build
 	cp $< $@
 
 ## device tree
-linux/arch/arm/boot/dts/zynq-$(TARGET).dtb: 
-	make -C linux -j $(NCORES) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) zynq-${TARGET}.dtb
+linux/arch/arm/boot/dts/zynq-$(TARGET).dtb:
+	make -C linux -j $(NCORES) ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) HOSTCFLAGS=-fcommon zynq-${TARGET}.dtb
 
 build/device_tree.dtb: linux/arch/arm/boot/dts/zynq-$(TARGET).dtb | build
 	cp $< $@

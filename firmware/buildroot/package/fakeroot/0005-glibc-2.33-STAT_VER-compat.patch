@@ -1,0 +1,45 @@
+Description: Define _STAT_VER fallback for glibc 2.33+ compatibility
+ glibc 2.33+ removed the _STAT_VER macro (the new stat ABI no longer uses
+ versioned __xstat functions). fakeroot 1.20.2 still references _STAT_VER
+ in libfakeroot.c, communicate.c, and libfakeroot_unix2003.c, causing
+ build failures on Ubuntu 22.04 (glibc 2.35) and similar modern distros.
+ .
+ This patch adds a `#define _STAT_VER 1` fallback at the top of each
+ affected source file. The value 1 matches _STAT_VER_LINUX on x86_64
+ (the only platform supported by this buildroot's host-fakeroot).
+ .
+ The proper fix is to upgrade to fakeroot 1.25+ where the new stat ABI is
+ handled, but this minimal patch keeps the existing recipe working.
+Author: Sam <sam@etri.local>
+Forwarded: not-needed (project-local fix for buildroot 2017.02 era)
+Last-Update: 2026-05-14
+--- a/libfakeroot.c
++++ b/libfakeroot.c
+@@ -1,3 +1,7 @@
++#ifndef _STAT_VER
++#define _STAT_VER 1  /* glibc 2.33+ compat: was _STAT_VER_LINUX on x86_64 */
++#endif
++
+ /*
+   Copyright Ⓒ 1997, 1998, 1999, 2000, 2001  joost witteveen
+   Copyright Ⓒ 2002-2003  Clemens Buchacher <drizzd@aon.at>
+--- a/communicate.c
++++ b/communicate.c
+@@ -1,3 +1,7 @@
++#ifndef _STAT_VER
++#define _STAT_VER 1  /* glibc 2.33+ compat */
++#endif
++
+ /*
+   copyright   : GPL
+   title       : fakeroot
+--- a/libfakeroot_unix2003.c
++++ b/libfakeroot_unix2003.c
+@@ -1,3 +1,7 @@
++#ifndef _STAT_VER
++#define _STAT_VER 1  /* glibc 2.33+ compat */
++#endif
++
+ /*
+    Wrappers around unix2003 functions which lookup the equivalent symbol
+    in libc and forward the call to it. fakeroot itself doesn't really

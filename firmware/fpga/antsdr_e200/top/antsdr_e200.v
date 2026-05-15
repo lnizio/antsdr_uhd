@@ -100,6 +100,12 @@ module antsdr_e200 (
         output  wire	[3:0]	rgmii_txd    	,
         output  wire          	eth_phy_rst_n  	,
 
+        // NCR Frame Start GPIO out — J30 header pin 2 (GPIO_00 net, FPGA V5)
+        // PL B0 B13 Bank 13 (VCC_1V8) — UHD `set_command_time` + `set_gpio_attr("FP0", ...)`
+        // 호출 시 radio_ctrl FIFO 를 통해 결정론적으로 본 핀에 반영.
+        // 다른 GPIO_01~07 의 FPGA 핀 매핑은 schematic PDF 에서 100% 확정 못해 1 비트만.
+        output  wire            gpio_hdr_0,
+
         // PS Connections
         inout   wire    [14:0]  PS_DDR3_addr    ,
         inout   wire    [2:0]   PS_DDR3_ba      ,
@@ -528,6 +534,10 @@ module antsdr_e200 (
     // b200 core
     ///////////////////////////////////////////////////////////////////////
     wire [9:0] fp_gpio_in, fp_gpio_out, fp_gpio_ddr;
+    // NCR: fp_gpio_out[0] 을 J30 pin 2 (GPIO_00 net, FPGA V5) 로 라우팅.
+    // UHD `set_gpio_attr("FP0", "OUT", val, 0x01)` 로 본 핀 제어.
+    assign gpio_hdr_0 = fp_gpio_out[0];
+    assign fp_gpio_in = 10'h00;  // input path 미사용 (output only)
 
     b200_core #(.EXTRA_BUFF_SIZE(12)) b200_core
     (
