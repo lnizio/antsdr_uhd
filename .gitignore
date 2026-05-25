@@ -37,3 +37,46 @@ host/build
 *.su
 
 build/
+# --- NCR: in-tree 빌드 산출물 (소스는 tracked, 빌드물만 무시) ---
+# Linux 커널 in-tree 빌드
+firmware/linux/**/*.o
+firmware/linux/**/*.a
+firmware/linux/**/*.ko
+firmware/linux/**/*.mod
+firmware/linux/**/*.mod.c
+firmware/linux/**/.*.cmd
+firmware/linux/**/modules.order
+firmware/linux/**/modules.builtin*
+firmware/linux/.config
+firmware/linux/.config.old
+firmware/linux/.version
+firmware/linux/.missing-syscalls.d
+firmware/linux/.tmp_*
+firmware/linux/.tmp_versions/
+firmware/linux/System.map
+firmware/linux/Module.symvers
+firmware/linux/vmlinux
+firmware/linux/vmlinux.*
+firmware/linux/include/generated/
+firmware/linux/include/config/
+firmware/linux/arch/*/boot/
+firmware/linux/scripts/**/*.o
+# Vivado / FPGA 빌드 산출물
+firmware/.Xil/
+firmware/fpga/**/bd/
+firmware/fpga/**/*.cache/
+firmware/fpga/**/*.runs/
+firmware/fpga/**/*.gen/
+firmware/fpga/**/*.hw/
+firmware/fpga/**/*.ip_user_files/
+firmware/fpga/**/*.sim/
+firmware/fpga/**/*.jou
+firmware/fpga/**/*.log
+# Linux 커널 생성물 추가분
+firmware/linux/**/generated/
+firmware/linux/**/*.s
+firmware/linux/**/*.lex.c
+firmware/linux/**/*.tab.c
+firmware/linux/**/*.tab.h
+firmware/linux/**/*.cpio*
+firmware/linux/**/config_data.gz
